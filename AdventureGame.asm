@@ -18,7 +18,7 @@ INCLUDE Irvine32.inc
 	; Introduction Function Variables (Will be used to print text)
 	programTitle		BYTE	"Program Title: Adventure Story Game", 0
 	programAuthors		BYTE	"Program by Coral Pease and Brandon Lam", 0
-	introText1			BYTE	"You wake up in strange place... (Revisions need to be made to intro text.)", 0
+	introText1			BYTE	"You wake up in strange place... you see hella trees.", 0
 	introText2			BYTE	"You hear a noise behind you. Not wanting to stick around, you decide it best to move.", 0
 	introText3			BYTE	"The noise doesn't seem to be getting further away. You're being followed.", 0
 	introText4			BYTE	"You come across a fork in the road see two paths.",0
@@ -761,10 +761,11 @@ gameLoop PROC
 	call ReadInt
 	call CrLf
 	cmp eax, 1
+	jl gameLoop
 	je main
 	cmp eax, 2
+	jg gameLoop
 	je farewellMessage
-	jmp gameLoop
 	ret
 
 gameLoop ENDP
@@ -780,7 +781,7 @@ farewellMessage PROC
 	mov edx, OFFSET farewellText
 	call WriteString
 	call CrLf
-	ret
+	exit
 
 farewellMessage ENDP
 
