@@ -95,11 +95,23 @@ INCLUDE Irvine32.inc
 	riverPathText5		BYTE	"Your chaser is getting closer, what do you do?",0
 
 	; Swim conclusion function variables
-	swimText1			BYTE	"too deep, too slow, you're caught!",0
+	swimText1			BYTE	"The bridge seeming too risky, you jump into the river.",0
+	swimText2			BYTE	"Ignoring the freezing temperature you swim as fast as you can.",0
+	swimText3			BYTE	"Unfortunately, the current is the water is deep and the current is too strong.",0
+	swimText4			BYTE	"You make very little progress before you're grabbed from behind. There is no escape.",0
 
 	; Bridge crossing conclusion function variables
-	bridgeSuccessText1	BYTE	"barely make across before bridge breaks, you escape to a town!",0
-	bridgeFailText1		BYTE	"Bridge breaks, you drown!",0
+	bridgeSuccessText1	BYTE	"Seeing the quick pace of the river's current, you decide it's better to take your chances with the bridge.",0
+	bridgeSuccessText2	BYTE	"You start running accross the bridge and hear a loud 'CRACK'. ",0
+	bridgeSuccessText3	BYTE	"You run even faster and leap onto the opposite bank just before the entire bridge collapses.",0
+	bridgeSuccessText4	BYTE	"You continue running and your pursuer seems to have fallen behind.",0
+	bridgeSuccessText5	Byte	"When you slow down for a moment to catch your breath, you notice what looks like a town up ahead.",0
+	bridgeSuccessText6	Byte	"You got away. You're safe. For now..",0
+	bridgeFailText1		BYTE	"Not being a strong swimmer you immediately head for the bridge.",0
+	bridgeFailText2		BYTE	"The bridge is in really rough shape and as you rush accross, you trip and fall hard.",0
+	bridgeFailText3		BYTE	"Part of the bridge crumbles into the water, taking you with it.",0
+	bridgeFailText4		BYTE	"You hit your head on the way down. You feel the shock of cold as you land in the water."
+	bridgeFailText5		Byte	"You see a dark figure approach and loom over you right before you black out.",0
 
 	; Game loop and farewell
 	endArt1				BYTE	" _____ _                           _", 0
@@ -607,7 +619,7 @@ riverPath ENDP
 
 ; ---------------------------------------------------------
 ; Description: Failed to swim accross river, game over.
-; Receives:  swimText 1- as global string variables
+; Receives:  swimText 1-4 as global string variables
 ; Returns: Resolution text for failure
 ; Preconditions: User must have chosen to go down path to the river then chose to swim.
 ; Registers changed: edx
@@ -616,15 +628,15 @@ swimRiver PROC
 	mov edx, OFFSET swimText1
 	call WriteString
 	call CrLf
-;	mov edx, OFFSET swimText2
-;	call WriteString
-;	call CrLf
-;	mov edx, OFFSET swimText3
-;	call WriteString
-;	call CrLf
-;	mov edx, OFFSET swimText4
-;	call WriteString
-;	call CrLf
+	mov edx, OFFSET swimText2
+	call WriteString
+	call CrLf
+	mov edx, OFFSET swimText3
+	call WriteString
+	call CrLf
+	mov edx, OFFSET swimText4
+	call WriteString
+	call CrLf
 	jmp gameLoop
 
 swimRiver ENDP
@@ -654,7 +666,7 @@ crossBridge ENDP
 
 ; ---------------------------------------------------------
 ; Description: Failed to cross the bridge, game over.
-; Receives:  bridgeFailText 1 as global string variables
+; Receives:  bridgeFailText 1-5 as global string variables
 ; Returns: Resolution text for failure
 ; Preconditions: Random check generated a number equal to or below 5 in the previous function 
 ; Registers changed: edx
@@ -663,15 +675,18 @@ bridgeFail PROC
 	mov edx, OFFSET bridgeFailText1
 	call WriteString
 	call CrLf
-;	mov edx, OFFSET swimText2
-;	call WriteString
-;	call CrLf
-;	mov edx, OFFSET swimText3
-;	call WriteString
-;	call CrLf
-;	mov edx, OFFSET swimText4
-;	call WriteString
-;	call CrLf
+	mov edx, OFFSET bridgeFailText2
+	call WriteString
+	call CrLf
+	mov edx, OFFSET bridgeFailText3
+	call WriteString
+	call CrLf
+	mov edx, OFFSET bridgeFailText4
+	call WriteString
+	call CrLf
+	mov edx, OFFSET bridgeFailText5
+	call WriteString
+	call CrLf
 	jmp gameLoop
 
 bridgeFail ENDP
@@ -679,7 +694,7 @@ bridgeFail ENDP
 
 ; ---------------------------------------------------------
 ; Description: Successfully crossed bridge, game over.
-; Receives:  bridgeSuccessText 1 as global string variables
+; Receives:  bridgeSuccessText 1-6 as global string variables
 ; Returns: Resolution text for success
 ; Preconditions: Random check generated a number greater than 5 in the previous function 
 ; Registers changed: edx
@@ -688,15 +703,21 @@ bridgeSuccess PROC
 	mov edx, OFFSET bridgeSuccessText1
 	call WriteString
 	call CrLf
-;	mov edx, OFFSET swimText2
-;	call WriteString
-;	call CrLf
-;	mov edx, OFFSET swimText3
-;	call WriteString
-;	call CrLf
-;	mov edx, OFFSET swimText4
-;	call WriteString
-;	call CrLf
+	mov edx, OFFSET bridgeSuccessText2
+	call WriteString
+	call CrLf
+	mov edx, OFFSET bridgeSuccessText3
+	call WriteString
+	call CrLf
+	mov edx, OFFSET bridgeSuccessText4
+	call WriteString
+	call CrLf
+	mov edx, OFFSET bridgeSuccessText5
+	call WriteString
+	call CrLf
+	mov edx, OFFSET bridgeSuccessText6
+	call WriteString
+	call CrLf
 	jmp gameLoop
 
 bridgeSuccess ENDP
