@@ -21,7 +21,7 @@ INCLUDE Irvine32.inc
 	introText1			BYTE	"You wake up in strange place... (Revisions need to be made to intro text.)", 0
 	introText2			BYTE	"You hear a noise behind you. Not wanting to stick around, you decide it best to move.", 0
 	introText3			BYTE	"The noise doesn't seem to be getting further away. You're being followed.", 0
-	introText4			BYTE	"You come across a fork in the road see two paths."
+	introText4			BYTE	"You come across a fork in the road see two paths.",0
 	introText5			BYTE	"One path presents a building, from the other you can hear rushing water.", 0
 
 	; initialBranch Function Variables
@@ -30,7 +30,7 @@ INCLUDE Irvine32.inc
 	; Variables for towards building path.
 	buildingBranchText1 BYTE	"On your way towards the building, you notice another path.", 0
 	buildingBranchText2	BYTE	"(1) You can continue towards the building, you might find help.", 0
-	buildingBranchText3	BYTE	"(2) You can break off towards the path and see where it will lead you."
+	buildingBranchText3	BYTE	"(2) You can break off towards the path and see where it will lead you.",0
 	buildingBranchText4	BYTE	"Your pursuer seems to be picking up the pace...", 0
 
 	; buildingPath Function Variables
@@ -51,7 +51,7 @@ INCLUDE Irvine32.inc
 	; House Scenario Outcome Variables
 	bedText1			BYTE	"You slide under the bed and keep as still as possible.", 0
 	bedText2			BYTE	"However, your pursuer simply checks the bed and finds you underneath.", 0
-	closetText1			BYTE	"You hide in the closet, praying that you aren't found."
+	closetText1			BYTE	"You hide in the closet, praying that you aren't found.",0
 	closetText2			BYTE	"You think you're safe, however, as you open the closet to take a peek...", 0
 	closetText3			BYTE	"You pursuer opens the closet for you and knocks you out!", 0
 	atticText1			BYTE	"Rushing up to the attic, you try your best to keep still.", 0
@@ -88,7 +88,30 @@ INCLUDE Irvine32.inc
 	climbSuccessText4	BYTE	"Perhaps the townsfolk can give you an idea as to where you are.", 0
 
 	; riverPath Function Variables
-	riverPathText1		BYTE	"This path needs to be written modularly. Placeholder for testing.", 0
+	riverPathText1		BYTE	"You reach the river you heard. You notice a bridge.", 0
+	riverPathText2		BYTE	"The bridge looks like it might fall apart if you try to cross it.",0
+	riverPathText3		BYTE	"(1) Maybe you could swim across? The current looks pretty strong.",0
+	riverPathText4		BYTE	"(2) You might be able to make it accross the bridge if you're careful.",0
+	riverPathText5		BYTE	"Your chaser is getting closer, what do you do?",0
+
+	; Swim conclusion function variables
+	swimText1			BYTE	"The bridge seeming too risky, you jump into the river.",0
+	swimText2			BYTE	"Ignoring the freezing temperature you swim as fast as you can.",0
+	swimText3			BYTE	"Unfortunately, the current is the water is deep and the current is too strong.",0
+	swimText4			BYTE	"You make very little progress before you're grabbed from behind. There is no escape.",0
+
+	; Bridge crossing conclusion function variables
+	bridgeSuccessText1	BYTE	"Seeing the quick pace of the river's current, you decide it's better to take your chances with the bridge.",0
+	bridgeSuccessText2	BYTE	"You start running accross the bridge and hear a loud 'CRACK'. ",0
+	bridgeSuccessText3	BYTE	"You run even faster and leap onto the opposite bank just before the entire bridge collapses.",0
+	bridgeSuccessText4	BYTE	"You continue running and your pursuer seems to have fallen behind.",0
+	bridgeSuccessText5	Byte	"When you slow down for a moment to catch your breath, you notice what looks like a town up ahead.",0
+	bridgeSuccessText6	Byte	"You got away. You're safe. For now..",0
+	bridgeFailText1		BYTE	"Not being a strong swimmer you immediately head for the bridge.",0
+	bridgeFailText2		BYTE	"The bridge is in really rough shape and as you rush accross, you trip and fall hard.",0
+	bridgeFailText3		BYTE	"Part of the bridge crumbles into the water, taking you with it.",0
+	bridgeFailText4		BYTE	"You hit your head on the way down. You feel the shock of cold as you land in the water."
+	bridgeFailText5		Byte	"You see a dark figure approach and loom over you right before you black out.",0
 
 	; Game loop and farewell
 	endArt1				BYTE	" _____ _                           _", 0
@@ -206,8 +229,8 @@ initialBranch PROC
 	call CrLf
 	cmp eax, 1				; Comparison equal to 1 (will go to buildingBranch)
 	je buildingBranch
-	;cmp eax, 2				; Comparison equal to (will go to riverPath)
-	;je riverPath
+	cmp eax, 2				; Comparison equal to 2 (will go to riverPath)
+	je riverPath
 	jmp initialBranch		; Loops until the input matches 1 or 2.
 	ret
 
@@ -397,7 +420,7 @@ atticOutcome ENDP
 ; Registers changed: eax, edx
 ; ---------------------------------------------------------
 pathMerge PROC
-	call Randomize	; Just in case, initialize the seed again.
+	;call Randomize	; Just in case, initialize the seed again.
 	; Prints scenario text
 	mov edx, OFFSET pathMergeText1
 	call WriteString
@@ -411,9 +434,10 @@ pathMerge PROC
 
 	; Calls random range (after setting the bounds)
 	mov eax, UPPER_RANGE
-	add eax, LOWER_RANGE
+	sub eax, LOWER_RANGE
+	inc eax
 	call RandomRange
-	sub eax, LOWER_RANGE	; Allows for us to compare from 1-10
+	add eax, LOWER_RANGE	; Allows for us to compare from 1-10
 	cmp eax, 5				; If less than or equal to 5, go to deadEnd
 	jle	deadEnd
 	cmp eax, 5				; If greater than 5, go to the riverPath.
@@ -493,9 +517,10 @@ fightOutcome ENDP
 
 climbCheck PROC
 	mov eax, UPPER_RANGE
-	add eax, LOWER_RANGE
+	sub eax, LOWER_RANGE
+	inc eax
 	call RandomRange
-	sub eax, LOWER_RANGE	; Allows for us to compare from 1-10
+	add eax, LOWER_RANGE	; Allows for us to compare from 1-10
 	cmp eax, 5				; If less than or equal to 5, go to climbFailure
 	jle	climbFailure
 	cmp eax, 5				; If greater than 5, go to the climbSuccess
@@ -557,29 +582,147 @@ climbFailure PROC
 climbFailure ENDP
 
 
+; ---------------------------------------------------------
+; Description: Chose to go towards river.
+; Receives:  riverPathText 1-5 as global string variables
+; Returns: A function call depending on input
+; Preconditions: User must have chosen to go down path to the river.
+; Registers changed: edx, eax
+; ---------------------------------------------------------
 riverPath PROC
 	mov edx, OFFSET riverPathText1
 	call WriteString
 	call CrLf
+	mov edx, OFFSET riverPathText2
+	call WriteString
+	call CrLf
+	mov edx, OFFSET riverPathText3
+	call WriteString
+	call CrLf
+	mov edx, OFFSET riverPathText4
+	call WriteString
+	call CrLf
+	mov edx, OFFSET riverPathText5
+	call WriteString
+	call CrLf
+	call ReadInt
+	call CrLf
+	cmp eax, 1
+	je swimRiver
+	cmp eax, 2
+	je crossBridge
+	jmp riverPath
 	ret
 
 riverPath ENDP
 
-;crossRiver PROC
 
-;crossRiver ENDP
+; ---------------------------------------------------------
+; Description: Failed to swim accross river, game over.
+; Receives:  swimText 1-4 as global string variables
+; Returns: Resolution text for failure
+; Preconditions: User must have chosen to go down path to the river then chose to swim.
+; Registers changed: edx
+; ---------------------------------------------------------
+swimRiver PROC
+	mov edx, OFFSET swimText1
+	call WriteString
+	call CrLf
+	mov edx, OFFSET swimText2
+	call WriteString
+	call CrLf
+	mov edx, OFFSET swimText3
+	call WriteString
+	call CrLf
+	mov edx, OFFSET swimText4
+	call WriteString
+	call CrLf
+	jmp gameLoop
 
-;crossBridge PROC
+swimRiver ENDP
 
-;crossBridge ENDP
 
-;drown PROC
+; ---------------------------------------------------------
+; Description:	Runs RNG check for bridge crossing scenario
+; Receives:  none
+; Returns: A function call based on the number generated
+; Preconditions: user chose to cross the bridge rather than swim in previous function.
+; Registers changed: eax
+; ---------------------------------------------------------
+crossBridge PROC
+	mov eax, UPPER_RANGE
+	sub eax, LOWER_RANGE
+	inc eax
+	call RandomRange
+	add eax, LOWER_RANGE	; Allows for us to compare from 1-10
+	cmp eax, 5				; If less than or equal to 5, go to bridgeFail
+	jle	bridgeFail
+	cmp eax, 5				; If greater than 5, go to the bridgeSuccess
+	jg	bridgeSuccess
+	ret
 
-;drown ENDP
+crossBridge ENDP
 
-;toTown PROC
 
-;toTown ENDP
+; ---------------------------------------------------------
+; Description: Failed to cross the bridge, game over.
+; Receives:  bridgeFailText 1-5 as global string variables
+; Returns: Resolution text for failure
+; Preconditions: Random check generated a number equal to or below 5 in the previous function 
+; Registers changed: edx
+; ---------------------------------------------------------
+bridgeFail PROC
+	mov edx, OFFSET bridgeFailText1
+	call WriteString
+	call CrLf
+	mov edx, OFFSET bridgeFailText2
+	call WriteString
+	call CrLf
+	mov edx, OFFSET bridgeFailText3
+	call WriteString
+	call CrLf
+	mov edx, OFFSET bridgeFailText4
+	call WriteString
+	call CrLf
+	mov edx, OFFSET bridgeFailText5
+	call WriteString
+	call CrLf
+	jmp gameLoop
+
+bridgeFail ENDP
+
+
+; ---------------------------------------------------------
+; Description: Successfully crossed bridge, game over.
+; Receives:  bridgeSuccessText 1-6 as global string variables
+; Returns: Resolution text for success
+; Preconditions: Random check generated a number greater than 5 in the previous function 
+; Registers changed: edx
+; ---------------------------------------------------------
+bridgeSuccess PROC
+	mov edx, OFFSET bridgeSuccessText1
+	call WriteString
+	call CrLf
+	mov edx, OFFSET bridgeSuccessText2
+	call WriteString
+	call CrLf
+	mov edx, OFFSET bridgeSuccessText3
+	call WriteString
+	call CrLf
+	mov edx, OFFSET bridgeSuccessText4
+	call WriteString
+	call CrLf
+	mov edx, OFFSET bridgeSuccessText5
+	call WriteString
+	call CrLf
+	mov edx, OFFSET bridgeSuccessText6
+	call WriteString
+	call CrLf
+	jmp gameLoop
+
+bridgeSuccess ENDP
+
+
 ; ---------------------------------------------------------
 ; Description: Game has reached an end, prints end options and ascii art
 ; Receives:  endArt 1-6 and gameText 1-3 global string variables
