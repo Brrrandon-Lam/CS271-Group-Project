@@ -21,7 +21,7 @@ INCLUDE Irvine32.inc
 	introText1			BYTE	"You wake up in strange place... you see hella trees.", 0
 	introText2			BYTE	"You hear a noise behind you. Not wanting to stick around, you decide it best to move.", 0
 	introText3			BYTE	"The noise doesn't seem to be getting further away. You're being followed.", 0
-	introText4			BYTE	"You come across a fork in the road see two paths.",0
+	introText4			BYTE	"You come across a fork in the road.",0
 	introText5			BYTE	"One path presents a building, from the other you can hear rushing water.", 0
 
 	; initialBranch Function Variables
@@ -35,7 +35,7 @@ INCLUDE Irvine32.inc
 
 	; buildingPath Function Variables
 	buildingPathText1	BYTE	"The building is a house. Certainly abandoned. The noise draws closer.", 0
-	buildingPathText2	BYTE	"With no time to run, you decide to enter the abandoned house", 0
+	buildingPathText2	BYTE	"With no time to run, you decide to enter the abandoned house.", 0
 	buildingPathText3	BYTE	"What stands out to you is a bed, a closet and a ladder to an attic.", 0
 	buildingPathText4	BYTE	"(1) Hiding under the bed seems like a safe bet, but you aren't sure.", 0
 	buildingPathText5	BYTE	"(2) Hiding in the closet might throw your pursuer off.", 0
@@ -67,7 +67,7 @@ INCLUDE Irvine32.inc
 	; Dead End Function Variables
 	deadEndText1		BYTE	"You reach the bottom of a cliff. It's a dead end. You're probably screwed.", 0
 	deadEndText2		BYTE	"Your pursuer comes closer and you realize you have to confront him.", 0
-	deadEndText3		BYTE	"However, the cliffside appears to be scalable", 0
+	deadEndText3		BYTE	"However, the cliffside appears to be scalable...", 0
 	deadEndText4		BYTE	"(1) Realizing you are doomed, you can try to fight your pursuer.", 0
 	deadEndText5		BYTE	"(2) Knowing that your martial skills are limited, you can try climbing.", 0
 
@@ -88,16 +88,22 @@ INCLUDE Irvine32.inc
 	climbSuccessText4	BYTE	"Perhaps the townsfolk can give you an idea as to where you are.", 0
 
 	; riverPath Function Variables
-	riverPathText1		BYTE	"You reach the river you heard. You notice a bridge.", 0
+	riverPathText1		BYTE	"You reach the river you heard earlier. You notice a bridge.", 0
 	riverPathText2		BYTE	"The bridge looks like it might fall apart if you try to cross it.",0
 	riverPathText3		BYTE	"(1) Maybe you could swim across? The current looks pretty strong.",0
 	riverPathText4		BYTE	"(2) You might be able to make it accross the bridge if you're careful.",0
 	riverPathText5		BYTE	"Your chaser is getting closer, what do you do?",0
+	riverPathArt1		BYTE	"      ___________    _______", 0
+	riverPathArt2		BYTE	"     /  _________\/\/_____  \", 0
+	riverPathArt3		BYTE	"    /___/  _.-'~~ `-._   \___\", 0
+	riverPathArt4		BYTE	"   /__/_,-'=~ ~~ ~~ - `-._ \__\",0 
+	riverPathArt5		BYTE    "   _,-'- ~~ ~ ~~ ~ ~~ ~ ~ `-._", 0
+	riverPathArt6		BYTE	",-'-~ ~~~ ~ ~ ~ ~~ ~ ~~ ~ ~~  `-.", 0
 
 	; Swim conclusion function variables
 	swimText1			BYTE	"The bridge seeming too risky, you jump into the river.",0
 	swimText2			BYTE	"Ignoring the freezing temperature you swim as fast as you can.",0
-	swimText3			BYTE	"Unfortunately, the current is the water is deep and the current is too strong.",0
+	swimText3			BYTE	"Unfortunately, the water is deep and the current is too strong.",0
 	swimText4			BYTE	"You make very little progress before you're grabbed from behind. There is no escape.",0
 
 	; Bridge crossing conclusion function variables
@@ -107,10 +113,16 @@ INCLUDE Irvine32.inc
 	bridgeSuccessText4	BYTE	"You continue running and your pursuer seems to have fallen behind.",0
 	bridgeSuccessText5	Byte	"When you slow down for a moment to catch your breath, you notice what looks like a town up ahead.",0
 	bridgeSuccessText6	Byte	"You got away. You're safe. For now..",0
+	townArt1			BYTE	"   _II___          _II____", 0
+	townArt2			BYTE	"__/_  /   \ ______/ ''   /'\_,__", 0
+	townArt3			BYTE	"  | /\``''''`\,--:--..,_/,.-{ },", 0
+	townArt4			BYTE	"; '/__\------|:  |[] .-.| O{ _ }", 0
+	townArt5			BYTE	":' |  | []  -|;  ''--:.;[,.'\,/", 0
+	townArt6			BYTE	"'  |[]|,.--'' '',   ''-,.    |", 0
 	bridgeFailText1		BYTE	"Not being a strong swimmer you immediately head for the bridge.",0
 	bridgeFailText2		BYTE	"The bridge is in really rough shape and as you rush accross, you trip and fall hard.",0
 	bridgeFailText3		BYTE	"Part of the bridge crumbles into the water, taking you with it.",0
-	bridgeFailText4		BYTE	"You hit your head on the way down. You feel the shock of cold as you land in the water."
+	bridgeFailText4		BYTE	"You hit your head on the way down. You feel the shock of cold as you land in the water.",0
 	bridgeFailText5		Byte	"You see a dark figure approach and loom over you right before you black out.",0
 
 	; Game loop and farewell
@@ -131,11 +143,11 @@ INCLUDE Irvine32.inc
 .code
 
 ; ---------------------------------------------------------
-; Description: 
-; Receives:  
-; Returns: 
-; Preconditions: 
-; Registers changed: 
+; Description: Calls the procedures that run the game.
+; Receives:  global string variables
+; Returns: procedure calls
+; Preconditions: the program is started
+; Registers changed: any registers that change in the called procedures, ESP
 ; ---------------------------------------------------------
 
 main PROC
@@ -293,6 +305,7 @@ displayBuildingArt PROC
 	mov edx, OFFSET buildingPathArt6
 	call WriteString
 	call CrLf
+	call Crlf
 	ret
 
 displayBuildingArt ENDP
@@ -590,6 +603,27 @@ climbFailure ENDP
 ; Registers changed: edx, eax
 ; ---------------------------------------------------------
 riverPath PROC
+	;display river art
+	mov edx, OFFSET riverPathArt1
+	call WriteString
+	call CrLf
+	mov edx, OFFSET riverPathArt2
+	call WriteString
+	call CrLf
+	mov edx, OFFSET riverPathArt3
+	call WriteString
+	call CrLf
+	mov edx, OFFSET riverPathArt4
+	call WriteString
+	call CrLf
+	mov edx, OFFSET riverPathArt5
+	call WriteString
+	call CrLf
+	mov edx, OFFSET riverPathArt6
+	call WriteString
+	call CrLf
+	
+	;deescribe location and get user input
 	mov edx, OFFSET riverPathText1
 	call WriteString
 	call CrLf
@@ -718,6 +752,27 @@ bridgeSuccess PROC
 	mov edx, OFFSET bridgeSuccessText6
 	call WriteString
 	call CrLf
+
+	;display town art
+	mov edx, OFFSET townArt1
+	call WriteString
+	call CrLf
+	mov edx, OFFSET townArt2
+	call WriteString
+	call CrLf
+	mov edx, OFFSET townArt3
+	call WriteString
+	call CrLf
+	mov edx, OFFSET townArt4
+	call WriteString
+	call CrLf
+	mov edx, OFFSET townArt5
+	call WriteString
+	call CrLf
+	mov edx, OFFSET townArt6
+	call WriteString
+	call CrLf
+
 	jmp gameLoop
 
 bridgeSuccess ENDP
